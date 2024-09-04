@@ -10,6 +10,8 @@ import com.intellij.ui.components.JBPanel
 import com.intellij.ui.content.ContentFactory
 import com.github.segevfiner.intellijjcefmacundoredobug.MyBundle
 import com.github.segevfiner.intellijjcefmacundoredobug.services.MyProjectService
+import com.intellij.ui.jcef.JBCefBrowser
+import java.awt.BorderLayout
 import javax.swing.JButton
 
 
@@ -31,15 +33,12 @@ class MyToolWindowFactory : ToolWindowFactory {
 
         private val service = toolWindow.project.service<MyProjectService>()
 
-        fun getContent() = JBPanel<JBPanel<*>>().apply {
-            val label = JBLabel(MyBundle.message("randomLabel", "?"))
+        fun getContent() = JBPanel<JBPanel<*>>(BorderLayout()).apply {
+            val browser = JBCefBrowser.createBuilder().setOffScreenRendering(true).setEnableOpenDevToolsMenuItem(true).build()
 
-            add(label)
-            add(JButton(MyBundle.message("shuffle")).apply {
-                addActionListener {
-                    label.text = MyBundle.message("randomLabel", service.getRandomNumber())
-                }
-            })
+            browser.loadURL("http://localhost:5173/")
+
+            add(browser.component, BorderLayout.CENTER)
         }
     }
 }
